@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Dentrust</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a2540;
+    --teal: #0e8fa0;
+    --teal-light: #1ab4c8;
+    --gold: #f5c842;
+    --gold-muted: #d4a820;
+    --dark: #071829;
+    --surface: #0f2e48;
+    --surface2: #163a56;
+    --text: #e8f4f8;
+    --text-muted: #7aacbf;
+    --white: #ffffff;
+    --red: #e74c4c;
+    --green: #2ecc8a;
+    --yellow: #f5c842;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .phone-wrapper {
+    width: 390px;
+    height: 844px;
+    background: var(--dark);
+    border-radius: 44px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 40px 120px rgba(0,0,0,0.8), 0 0 80px rgba(14,143,160,0.15);
+  }
+
+  /* PAGES */
+  .page {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(40px);
+  }
+  .page::-webkit-scrollbar { display: none; }
+  .page.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0);
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 28px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--dark);
+  }
+  .status-bar .time { font-size: 15px; font-weight: 700; color: var(--text); }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .status-icons svg { width: 16px; height: 16px; fill: var(--text-muted); }
+
+  /* NAV BAR */
+  .nav-bar {
+    position: sticky;
+    bottom: 0;
+    background: var(--surface);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0 24px;
+    backdrop-filter: blur(20px);
+    z-index: 10;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 6px 16px;
+    border-radius: 16px;
+    transition: background 0.2s;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .nav-item.active { color: var(--teal-light); background: rgba(26,180,200,0.1); }
+  .nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  /* ====== PAGE 1: HOME ====== */
+  #page-home { background: var(--dark); }
+
+  .home-header {
+    padding: 20px 24px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .home-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--surface);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid rgba(26,180,200,0.3);
+  }
+  .logo-icon svg { width: 24px; height: 24px; }
+  .logo-name { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--white); }
+  .logo-name span { color: var(--teal-light); }
+  .notif-btn {
+    width: 40px; height: 40px;
+    background: var(--surface);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.07);
+    position: relative;
+  }
+  .notif-btn svg { width: 20px; height: 20px; stroke: var(--text-muted); fill: none; stroke-width: 2; }
+  .notif-dot {
+    position: absolute; top: 8px; right: 8px;
+    width: 8px; height: 8px;
+    background: var(--gold); border-radius: 50%;
+    border: 2px solid var(--dark);
+  }
+
+  .hero-section {
+    margin: 8px 24px 0;
+    background: var(--surface);
+    border-radius: 28px;
+    padding: 24px;
+    border: 1px solid rgba(26,180,200,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: rgba(14,143,160,0.12);
+    border-radius: 50%;
+  }
+  .hero-section::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; right: 20px;
+    width: 80px; height: 80px;
+    background: rgba(245,200,66,0.07);
+    border-radius: 50%;
+  }
+  .hero-greeting { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+  .hero-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: var(--white); line-height: 1.2; margin-bottom: 12px; }
+  .hero-title span { color: var(--teal-light); }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--teal);
+    color: var(--white);
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s;
+  }
+  .hero-cta:hover { background: var(--teal-light); }
+  .hero-cta svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+
+  .hero-tooth {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.15;
+  }
+  .hero-tooth svg { width: 80px; height: 80px; }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 24px 12px;
+  }
+  .section-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--white); }
+  .section-link { font-size: 12px; color: var(--teal-light); cursor: pointer; }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 24px;
+  }
+  .feature-card {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 18px 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card:active { transform: scale(0.97); }
+  .feature-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    opacity: 0.07;
+  }
+  .feature-card.ai::after { background: var(--teal); }
+  .feature-card.verify::after { background: var(--gold); }
+  .feature-card.nav::after { background: #4aacff; }
+  .feature-card.edu::after { background: var(--green); }
+
+  .feature-icon {
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .feature-icon.ai { background: rgba(14,143,160,0.2); }
+  .feature-icon.verify { background: rgba(245,200,66,0.15); }
+  .feature-icon.nav { background: rgba(74,172,255,0.15); }
+  .feature-icon.edu { background: rgba(46,204,138,0.15); }
+  .feature-icon svg { width: 22px; height: 22px; stroke-width: 2; fill: none; }
+  .feature-icon.ai svg { stroke: var(--teal-light); }
+  .feature-icon.verify svg { stroke: var(--gold); }
+  .feature-icon.nav svg { stroke: #4aacff; }
+  .feature-icon.edu svg { stroke: var(--green); }
+
+  .feature-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 4px; line-height: 1.2; }
+  .feature-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+
+  .risk-section { padding: 8px 24px 20px; }
+  .risk-card {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 18px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .risk-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 14px; }
+  .risk-indicators { display: flex; gap: 8px; }
+  .risk-badge {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 8px;
+    border-radius: 14px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .risk-badge.green { background: rgba(46,204,138,0.12); color: var(--green); border: 1px solid rgba(46,204,138,0.2); }
+  .risk-badge.yellow { background: rgba(245,200,66,0.12); color: var(--gold); border: 1px solid rgba(245,200,66,0.2); }
+  .risk-badge.red { background: rgba(231,76,76,0.12); color: var(--red); border: 1px solid rgba(231,76,76,0.2); }
+  .risk-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .risk-badge.green .risk-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .risk-badge.yellow .risk-dot { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+  .risk-badge.red .risk-dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
+
+  /* ====== PAGE 2: FEATURES ====== */
+  #page-features { background: var(--dark); }
+
+  .page-header {
+    padding: 20px 24px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .back-btn {
+    width: 38px; height: 38px;
+    background: var(--surface);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .back-btn svg { width: 18px; height: 18px; stroke: var(--text); fill: none; stroke-width: 2.5; }
+  .page-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--white); }
+
+  .ai-screening-card {
+    margin: 0 24px 16px;
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 22px;
+    border: 1px solid rgba(14,143,160,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-screening-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--teal) 0%, var(--teal-light) 100%);
+  }
+  .card-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(14,143,160,0.15);
+    color: var(--teal-light);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    border: 1px solid rgba(14,143,160,0.25);
+  }
+  .card-badge.gold { background: rgba(245,200,66,0.12); color: var(--gold); border-color: rgba(245,200,66,0.2); }
+  .card-badge.blue { background: rgba(74,172,255,0.12); color: #4aacff; border-color: rgba(74,172,255,0.2); }
+  .card-badge.grn { background: rgba(46,204,138,0.12); color: var(--green); border-color: rgba(46,204,138,0.2); }
+  .card-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .card-title { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+  .card-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+
+  .symptom-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .chip {
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--surface2);
+    color: var(--text-muted);
+    border: 1px solid rgba(255,255,255,0.07);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .chip.active {
+    background: rgba(14,143,160,0.2);
+    color: var(--teal-light);
+    border-color: rgba(14,143,160,0.3);
+  }
+
+  .upload-box {
+    background: var(--surface2);
+    border: 2px dashed rgba(245,200,66,0.3);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+
+  .upload-box-ai {
+    background: var(--surface2);
+    border: 2px dashed rgba(66, 245, 236, 0.3);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+  .upload-box svg { width: 36px; height: 36px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+  .upload-box-ai svg { width: 36px; height: 36px; stroke: var(--teal-light); fill: none; stroke-width: 1.5; }
+  .upload-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--white); }
+  .upload-sub { font-size: 12px; color: var(--text-muted); text-align: center; }
+
+  .verify-result {
+    background: var(--surface2);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .result-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .result-row:last-child { margin-bottom: 0; }
+  .result-label { font-size: 12px; color: var(--text-muted); }
+  .result-value { font-size: 12px; font-weight: 600; color: var(--white); }
+  .status-pill {
+    padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  }
+  .status-pill.green { background: rgba(46,204,138,0.15); color: var(--green); }
+  .status-pill.red { background: rgba(231,76,76,0.15); color: var(--red); }
+  .status-pill.yellow { background: rgba(245,200,66,0.12); color: var(--gold); }
+
+  .action-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .action-btn:hover { opacity: 0.9; }
+  .action-btn.primary { background: var(--teal); color: var(--white); }
+  .action-btn.gold { background: var(--gold-muted); color: var(--dark); }
+  .action-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+  /* ====== PAGE 3: NAVIGATOR + EDU ====== */
+  #page-explore { background: var(--dark); }
+
+  .map-placeholder {
+    margin: 0 24px 16px;
+    height: 180px;
+    background: var(--surface);
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(74,172,255,0.2);
+    cursor: pointer;
+  }
+  .map-grid {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(26,180,200,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,180,200,0.08) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .map-pin {
+    position: absolute;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .map-pin.teal { background: var(--teal-light); box-shadow: 0 0 0 4px rgba(26,180,200,0.2); top: 45%; left: 42%; }
+  .map-pin.gold { background: var(--gold); box-shadow: 0 0 0 4px rgba(245,200,66,0.2); top: 30%; left: 60%; }
+  .map-pin.green { background: var(--green); box-shadow: 0 0 0 4px rgba(46,204,138,0.2); top: 60%; left: 28%; }
+  .map-pin.blue { background: #4aacff; box-shadow: 0 0 0 4px rgba(74,172,255,0.2); top: 25%; left: 35%; }
+  .map-label {
+    position: absolute;
+    bottom: 16px; left: 16px;
+    background: rgba(10,37,64,0.85);
+    backdrop-filter: blur(10px);
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #4aacff;
+    border: 1px solid rgba(74,172,255,0.2);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .map-label svg { width: 14px; height: 14px; stroke: #4aacff; fill: none; stroke-width: 2; }
+
+  .facilities-list { padding: 0 24px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .facility-card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .facility-card:hover { border-color: rgba(74,172,255,0.25); }
+  .facility-icon {
+    width: 44px; height: 44px; min-width: 44px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .facility-icon.rsgm { background: rgba(14,143,160,0.15); }
+  .facility-icon.pusk { background: rgba(46,204,138,0.12); }
+  .facility-icon.klinik { background: rgba(74,172,255,0.12); }
+  .facility-info { flex: 1; }
+  .facility-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+  .facility-meta { font-size: 11px; color: var(--text-muted); display: flex; gap: 8px; }
+  .facility-price { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--teal-light); text-align: right; }
+
+  .edu-grid { display: flex; flex-direction: column; gap: 10px; padding: 0 24px 24px; }
+  .edu-card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+  }
+  .edu-thumb {
+    width: 64px; height: 64px; min-width: 64px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+  }
+  .edu-thumb.v1 { background: rgba(14,143,160,0.15); }
+  .edu-thumb.v2 { background: rgba(245,200,66,0.1); }
+  .edu-thumb.v3 { background: rgba(231,76,76,0.1); }
+  .edu-thumb.v4 { background: rgba(46,204,138,0.1); }
+  .edu-info { flex: 1; }
+  .edu-type { font-size: 10px; font-weight: 600; color: var(--teal-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .edu-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--white); line-height: 1.3; margin-bottom: 4px; }
+  .edu-meta { font-size: 11px; color: var(--text-muted); }
+  .play-btn {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    background: rgba(14,143,160,0.2);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .play-btn svg { width: 14px; height: 14px; fill: var(--teal-light); }
+
+  /* Tabs */
+  .tab-row {
+    display: flex;
+    gap: 8px;
+    padding: 0 24px 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tab-row::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--surface);
+    color: var(--text-muted);
+    border: 1px solid rgba(255,255,255,0.07);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--teal); color: var(--white); border-color: var(--teal); }
+
+  /* BPJS Banner */
+  .bpjs-banner {
+    margin: 0 24px 20px;
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 16px 18px;
+    border: 1px solid rgba(46,204,138,0.25);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+  }
+  .bpjs-icon {
+    width: 46px; height: 46px;
+    background: rgba(46,204,138,0.15);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .bpjs-text {}
+  .bpjs-label { font-size: 11px; color: var(--green); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .bpjs-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--white); }
+  .bpjs-sub { font-size: 12px; color: var(--text-muted); }
+
+  /* Animations */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  .pulse { animation: pulse 2s infinite; }
+
+  /* Scroll container */
+  .scroll-content {
+    min-height: calc(100% - 88px);
+    padding-bottom: 20px;
+  }
+
+  /* Toggle features visibility */
+  .feature-detail { display: none; }
+
+</style>
+</head>
+<body>
+
+<div class="phone-wrapper">
+
+  <!-- ==================== PAGE 1: HOME ==================== -->
+  <div class="page active" id="page-home">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1 6l11 11L23 6"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="1" y="6" width="22" height="12" rx="2"/><path d="M23 10h1v4h-1"/></svg>
+      </div>
+    </div>
+
+    <div class="scroll-content">
+      <div class="home-header">
+        <div class="home-logo">
+         
+            <img src="dentrust.png" alt="" srcset="" width="40" height="40">
+          
+          <span class="logo-name">Den<span>trust</span></span>
+        </div>
+        <div class="notif-btn">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="notif-dot"></div>
+        </div>
+      </div>
+
+      <div class="hero-section">
+        <div class="hero-greeting">Selamat datang 👋</div>
+        <div class="hero-title">Jaga Senyummu,<br>Pilihan <span>Terpercaya</span></div>
+        <button class="hero-cta" onclick="navigate('page-features')">
+          Mulai Screening
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <div class="hero-tooth">
+          <svg viewBox="0 0 80 80" fill="none">
+            <path d="M40 8C30 8 23 16 23 24C23 32 27 38 31 44C33 47 35 51 35 56C35 61 36 67 40 67C44 67 45 61 45 56C45 51 47 47 49 44C53 38 57 32 57 24C57 16 50 8 40 8Z" fill="white"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">Fitur Utama</div>
+        <div class="section-link" onclick="navigate('page-features')">Lihat semua →</div>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card ai" onclick="navigate('page-features')">
+          <div class="feature-icon ai">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          </div>
+          <div class="feature-name">Smart AI Screening</div>
+          <div class="feature-desc">Diagnosis awal berbasis AI & NLP</div>
+        </div>
+        <div class="feature-card verify" onclick="navigate('page-features')">
+          <div class="feature-icon verify">
+            <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div class="feature-name">Validasi Legalitas</div>
+          <div class="feature-desc">Verifikasi izin tukang gigi</div>
+        </div>
+        <div class="feature-card nav" onclick="navigate('page-explore')">
+          <div class="feature-icon nav">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div class="feature-name">Dental Navigator</div>
+          <div class="feature-desc">Fasilitas kesehatan terdekat</div>
+        </div>
+        <div class="feature-card edu" onclick="navigate('page-explore')">
+          <div class="feature-icon edu">
+            <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="feature-name">Edukasi Gigi</div>
+          <div class="feature-desc">Video & infografis interaktif</div>
+        </div>
+      </div>
+
+      <div class="section-header" style="padding-top:20px;">
+        <div class="section-title">Indikator Risiko</div>
+      </div>
+
+      <div class="risk-section">
+        <div class="risk-card">
+          <div class="risk-title">Status Tukang Gigi</div>
+          <div class="risk-indicators">
+            <div class="risk-badge green">
+              <div class="risk-dot"></div>
+              Aman
+            </div>
+            <div class="risk-badge yellow">
+              <div class="risk-dot"></div>
+              Waspada
+            </div>
+            <div class="risk-badge red">
+              <div class="risk-dot"></div>
+              Ilegal
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-item active" onclick="navigate('page-home')">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Beranda
+      </div>
+      <div class="nav-item" onclick="navigate('page-features')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Fitur
+      </div>
+      <div class="nav-item" onclick="navigate('page-explore')">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Jelajahi
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 2: FEATURES ==================== -->
+  <div class="page" id="page-features">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#7aacbf"><rect x="1" y="6" width="22" height="12" rx="2"/></svg>
+      </div>
+    </div>
+
+    <div class="scroll-content">
+      <div class="page-header">
+        <div class="back-btn" onclick="navigate('page-home')">
+          <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </div>
+        <div class="page-title">Fitur Dentrust</div>
+      </div>
+
+      <div class="tab-row">
+        <div class="tab active" onclick="setTab(this, 'ai')">AI Screening</div>
+        <div class="tab" onclick="setTab(this, 'verify')">Validasi</div>
+      </div>
+
+      <!-- AI SCREENING -->
+      <div id="tab-ai">
+        <div class="ai-screening-card">
+          <div class="card-badge">
+            <div class="card-badge-dot"></div>
+            Smart AI Screening
+          </div>
+          <div class="card-title">Diagnosis Awal Keluhan Gigi</div>
+          <div class="card-desc">Ceritakan keluhan Anda dan sistem AI kami akan menganalisis untuk menentukan tingkat kompleksitas dan operator yang berwenang.</div>
+          
+          <div style="background:var(--surface2);border-radius:14px;padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,0.06);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--teal-light)" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <span style="font-size:13px;color:var(--text-muted);">Ceritakan gejala Anda...</span>
+          </div>
+          
+          <div class="upload-box-ai" onclick="">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="upload-title">Upload Foto</div>
+            <div class="upload-sub">JPG, PNG, PDF • Maks 10MB</div>
+          </div>
+
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;font-weight:500;">Pilih keluhan umum:</div>
+          <div class="symptom-chips">
+            <div class="chip active">Gigi berlubang</div>
+            <div class="chip">Gusi berdarah</div>
+            <div class="chip">Sakit gigi</div>
+            <div class="chip">Gigi goyang</div>
+            <div class="chip">Bau mulut</div>
+          </div>
+
+          <div style="background:rgba(14,143,160,0.08);border-radius:14px;padding:14px;border:1px solid rgba(14,143,160,0.2);margin-bottom:14px;">
+            <div style="font-size:11px;color:var(--teal-light);font-weight:600;margin-bottom:8px;">⚡ HASIL ANALISIS AI</div>
+            <div style="font-size:13px;color:var(--white);font-weight:600;margin-bottom:4px;">Karies Tingkat Sedang</div>
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">Perlu penanganan oleh <strong style="color:var(--white);">Dokter Gigi</strong>. Tukang gigi tidak berwenang menangani kondisi ini berdasarkan Permenkes No. 39/2014.</div>
+          </div>
+
+          <button class="action-btn primary">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83"/></svg>
+            Analisis Sekarang
+          </button>
+        </div>
+      </div>
+
+      <!-- VERIFY -->
+      <div id="tab-verify" style="display:none;">
+        <div class="ai-screening-card" style="border-color:rgba(245,200,66,0.25);">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold-muted),var(--gold));"></div>
+          <div class="card-badge gold">
+            <div class="card-badge-dot"></div>
+            Cognitive Vision Verifier
+          </div>
+          <div class="card-title">Validasi Legalitas Tukang Gigi</div>
+          <div class="card-desc">Upload foto pamflet atau iklan layanan gigi. AI akan memverifikasi izin praktik dan kesesuaian tindakan dengan Permenkes No. 39/2014.</div>
+
+          <div class="upload-box" onclick="">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="upload-title">Upload Foto / Pamflet</div>
+            <div class="upload-sub">JPG, PNG, PDF • Maks 10MB</div>
+          </div>
+
+          <div class="verify-result">
+            <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Contoh Hasil Verifikasi</div>
+            <div class="result-row">
+              <span class="result-label">Nama Praktik</span>
+              <span class="result-value">Tukang Gigi Pak Sani</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Izin Praktik</span>
+              <span class="status-pill red">Tidak Terverifikasi</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Kesesuaian Tindakan</span>
+              <span class="status-pill yellow">⚠ Waspada</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Status</span>
+              <span class="status-pill red">Tukang Gigi Ilegal</span>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center;padding:12px 14px;background:rgba(245,200,66,0.08);border-radius:12px;border:1px solid rgba(245,200,66,0.2);margin-bottom:14px;">
+            <span style="font-size:18px;">⚠️</span>
+            <span style="font-size:12px;color:var(--gold);line-height:1.4;">Terdapat 2 tindakan yang <strong>tidak sesuai</strong> kewenangan. Kunjungi dokter gigi untuk penanganan lebih lanjut.</span>
+          </div>
+
+          <button class="action-btn gold">
+            <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>
+            Verifikasi Sekarang
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-item" onclick="navigate('page-home')">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Beranda
+      </div>
+      <div class="nav-item active" onclick="navigate('page-features')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Fitur
+      </div>
+      <div class="nav-item" onclick="navigate('page-explore')">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Jelajahi
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 3: EXPLORE (NAVIGATOR + EDU) ==================== -->
+  <div class="page" id="page-explore">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#7aacbf"><rect x="1" y="6" width="22" height="12" rx="2"/></svg>
+      </div>
+    </div>
+
+    <div class="scroll-content">
+      <div class="page-header">
+        <div class="back-btn" onclick="navigate('page-home')">
+          <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </div>
+        <div class="page-title">Jelajahi</div>
+      </div>
+
+      <div class="tab-row">
+        <div class="tab active" onclick="setTabExplore(this,'nav')">Dental Navigator</div>
+        <div class="tab" onclick="setTabExplore(this,'edu')">Edukasi</div>
+      </div>
+
+      <!-- NAVIGATOR -->
+      <div id="tab-nav">
+        <div class="map-placeholder">
+          <div class="map-grid"></div>
+          <div class="map-pin teal"></div>
+          <div class="map-pin gold"></div>
+          <div class="map-pin green"></div>
+          <div class="map-pin blue"></div>
+          <div class="map-label">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            4 Fasilitas Terdekat
+          </div>
+        </div>
+
+        <div class="bpjs-banner">
+          <div class="bpjs-icon">🏥</div>
+          <div class="bpjs-text">
+            <div class="bpjs-label">Program Pemerintah</div>
+            <div class="bpjs-title">BPJS & Gratis Periksa</div>
+            <div class="bpjs-sub">Cek layanan gratis di area Anda</div>
+          </div>
+        </div>
+
+        <div class="section-header" style="padding-top:0;">
+          <div class="section-title">Fasilitas Terdekat</div>
+          <div class="section-link">Filter →</div>
+        </div>
+
+        <div class="facilities-list">
+          <div class="facility-card">
+            <div class="facility-icon rsgm">🦷</div>
+            <div class="facility-info">
+              <div class="facility-name">RSGM Unsoed</div>
+              <div class="facility-meta"><span>📍 0.8 km</span><span>⭐ 4.8</span></div>
+            </div>
+            <div class="facility-price">Rp 50K<br><span style="font-size:10px;color:var(--text-muted);">Dokter Residen</span></div>
+          </div>
+          <div class="facility-card">
+            <div class="facility-icon pusk">🏥</div>
+            <div class="facility-info">
+              <div class="facility-name">Puskesmas Sehat</div>
+              <div class="facility-meta"><span>📍 1.2 km</span><span>⭐ 4.5</span></div>
+            </div>
+            <div class="facility-price">Gratis<br><span style="font-size:10px;color:var(--text-muted);">BPJS</span></div>
+          </div>
+          <div class="facility-card">
+            <div class="facility-icon klinik">🏨</div>
+            <div class="facility-info">
+              <div class="facility-name">Klinik Senyum Indah</div>
+              <div class="facility-meta"><span>📍 2.1 km</span><span>⭐ 4.7</span></div>
+            </div>
+            <div class="facility-price">Rp 100K<br><span style="font-size:10px;color:var(--text-muted);">drg. Umum</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDUKASI -->
+      <div id="tab-edu" style="display:none;">
+        <div class="section-header" style="padding-top:0;padding-bottom:8px;">
+          <div class="section-title">Konten Edukasi</div>
+        </div>
+        <div class="edu-grid">
+          <div class="edu-card">
+            <div class="edu-thumb v1">🦷</div>
+            <div class="edu-info">
+              <div class="edu-type">Video • 3 menit</div>
+              <div class="edu-title">Apa Saja yang Boleh Dilakukan Tukang Gigi?</div>
+              <div class="edu-meta">Permenkes No. 39/2014</div>
+            </div>
+            <div class="play-btn">
+              <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+          </div>
+          <div class="edu-card">
+            <div class="edu-thumb v3">⚠️</div>
+            <div class="edu-info">
+              <div class="edu-type" style="color:var(--red);">Infografis</div>
+              <div class="edu-title">Bahaya Cabut Gigi di Tukang Gigi Ilegal</div>
+              <div class="edu-meta">Risiko & Komplikasi</div>
+            </div>
+            <div class="play-btn" style="background:rgba(231,76,76,0.15);">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:var(--red)"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+          </div>
+          <div class="edu-card">
+            <div class="edu-thumb v4">💉</div>
+            <div class="edu-info">
+              <div class="edu-type" style="color:var(--green);">Video • 5 menit</div>
+              <div class="edu-title">Perbedaan Tindakan Dokter Gigi vs Tukang Gigi</div>
+              <div class="edu-meta">Panduan Memilih</div>
+            </div>
+            <div class="play-btn" style="background:rgba(46,204,138,0.15);">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:var(--green)"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+          </div>
+          <div class="edu-card">
+            <div class="edu-thumb v2">📋</div>
+            <div class="edu-info">
+              <div class="edu-type" style="color:var(--gold);">Infografis</div>
+              <div class="edu-title">10 Tanda Tukang Gigi Tanpa Izin Resmi</div>
+              <div class="edu-meta">Kenali & Hindari</div>
+            </div>
+            <div class="play-btn" style="background:rgba(245,200,66,0.12);">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:var(--gold)"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-item" onclick="navigate('page-home')">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Beranda
+      </div>
+      <div class="nav-item" onclick="navigate('page-features')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Fitur
+      </div>
+      <div class="nav-item active" onclick="navigate('page-explore')">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Jelajahi
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function navigate(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  document.getElementById(pageId).scrollTop = 0;
+}
+
+function setTab(el, tabId) {
+  el.closest('.page').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-ai').style.display = tabId === 'ai' ? 'block' : 'none';
+  document.getElementById('tab-verify').style.display = tabId === 'verify' ? 'block' : 'none';
+}
+
+function setTabExplore(el, tabId) {
+  el.closest('.page').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-nav').style.display = tabId === 'nav' ? 'block' : 'none';
+  document.getElementById('tab-edu').style.display = tabId === 'edu' ? 'block' : 'none';
+}
+
+// Chip toggle
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    chip.classList.toggle('active');
+  });
+});
+</script>
+</body>
+</html>
